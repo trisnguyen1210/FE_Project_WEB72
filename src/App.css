@@ -1,42 +1,34 @@
-#root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+.demo-logo-vertical{
+  height: 12px;
+}
+.forgotPassWord{
+  margin: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  color: #6c3dd3;
 }
 
-.logo {
-  height: 6em;
-  padding: 1.5em;
-  will-change: filter;
-  transition: filter 300ms;
+#components-form-demo-normal-login .login-form {
+  max-width: 300px;
 }
-.logo:hover {
-  filter: drop-shadow(0 0 2em #646cffaa);
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
 }
-.logo.react:hover {
-  filter: drop-shadow(0 0 2em #61dafbaa);
+#components-form-demo-normal-login .ant-col-rtl .login-form-forgot {
+  float: left;
 }
-
-@keyframes logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.login-form-button {
+  width: 100%;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  a:nth-of-type(2) .logo {
-    animation: logo-spin infinite 20s linear;
-  }
+.login-form-register{
+  display: flex;
+  justify-content: center;
 }
-
-.card {
-  padding: 2em;
-}
-
-.read-the-docs {
-  color: #888;
+.login-form-register span{
+  padding-top: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: blue;
 }
