@@ -25,3 +25,10 @@
   display: flex;
   justify-content: center;
 }
+.login-form-register span{
+  padding-top: 16px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: blue;
+}

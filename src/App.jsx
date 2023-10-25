@@ -19,11 +19,22 @@ const App = () => {
     token: { colorBgContainer },
   } = theme.useToken();
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalLoginOpen, setIsModalLoginOpen] = useState(false);
+  const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false);
 
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setIsModalLoginOpen(false);
+    setIsModalRegisterOpen(false)
   };
+
+  const handleOpenRegisterModal = () => {
+    setIsModalLoginOpen(false)
+    setIsModalRegisterOpen(true)
+  }
+  const handleOpenLoginModal = () => {
+    setIsModalLoginOpen(true)
+    setIsModalRegisterOpen(false)
+  }
 
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
@@ -43,7 +54,7 @@ const App = () => {
               icon: <UserOutlined />,
               label: 'Login',
               onClick: () => {
-                setIsModalOpen(true);
+                setIsModalLoginOpen(true);
               }
             },
             {
@@ -59,10 +70,10 @@ const App = () => {
           ]}
         />
         <Modal title="LogIn"
-          open={isModalOpen}
+          open={isModalLoginOpen}
           onCancel={handleCancel}
           footer={null}
-          >
+        >
           <Form
             name="normal_login"
             className="login-form"
@@ -110,8 +121,67 @@ const App = () => {
               <Button type="primary" htmlType="submit" className="login-form-button">
                 Log in
               </Button>
-              <div className='login-form-register'>Or</div>
-             <div className='login-form-register'><a href="">register now!</a></div>
+              <div className='login-form-register'><span onClick={handleOpenRegisterModal}>Register now!</span></div>
+            </Form.Item>
+          </Form>
+        </Modal>
+        <Modal title='Register'
+          open={isModalRegisterOpen}
+          onCancel={handleCancel}
+          footer={null}
+        >
+          <Form
+            name="normal_register"
+            className="register-form"
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Username!',
+                },
+              ]}
+            >
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Password!',
+                },
+              ]}
+            >
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+            <Form.Item
+              name="comfirm password"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Comfirm Password!',
+                },
+              ]}
+            >
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="comfirm password"
+                placeholder="Comfirm Password"
+              />
+            </Form.Item>
+            
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="login-form-button">
+               Register
+              </Button>
+              <div className='login-form-register'><span onClick={handleOpenLoginModal}>Log in</span></div>
             </Form.Item>
           </Form>
         </Modal>
