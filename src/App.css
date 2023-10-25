@@ -1,3 +1,27 @@
 .demo-logo-vertical{
   height: 12px;
 }
+.forgotPassWord{
+  margin: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: flex-end;
+  color: #6c3dd3;
+}
+
+#components-form-demo-normal-login .login-form {
+  max-width: 300px;
+}
+#components-form-demo-normal-login .login-form-forgot {
+  float: right;
+}
+#components-form-demo-normal-login .ant-col-rtl .login-form-forgot {
+  float: left;
+}
+.login-form-button {
+  width: 100%;
+}
+.login-form-register{
+  display: flex;
+  justify-content: center;
+}

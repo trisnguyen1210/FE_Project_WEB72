@@ -6,26 +6,27 @@ import {
   UploadOutlined,
   UserOutlined,
   VideoCameraOutlined,
+  LockOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme, Modal, Input, Typography } from 'antd';
+import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 
 
 const { Header, Sider, Content } = Layout;
 const App = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [login, setLogin] = useState(false);
+  // const [login, setLogin] = useState(false);
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  
-  const handleOk = () => {
-    setIsModalOpen(false);
-    setLogin(true)
-  };
+
   const handleCancel = () => {
     setIsModalOpen(false);
+  };
+
+  const onFinish = (values) => {
+    console.log('Received values of form: ', values);
   };
   return (
     <Layout>
@@ -35,7 +36,7 @@ const App = () => {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={['1']}
-          style={{height: '100vh'}}
+          style={{ height: '100vh' }}
           items={[
             {
               key: '1',
@@ -57,12 +58,63 @@ const App = () => {
             },
           ]}
         />
-        <Modal title="LogIn" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <Typography>Tài Khoản:</Typography>
-        <Input placeholder='Nhập tài khoản'/>
-        <Typography>Mật khẩu:</Typography>
-        <Input placeholder='Nhập mật khẩn'/>
-      </Modal>
+        <Modal title="LogIn"
+          open={isModalOpen}
+          onCancel={handleCancel}
+          footer={null}
+          >
+          <Form
+            name="normal_login"
+            className="login-form"
+            initialValues={{
+              remember: true,
+            }}
+            onFinish={onFinish}
+          >
+            <Form.Item
+              name="username"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Username!',
+                },
+              ]}
+            >
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+            </Form.Item>
+            <Form.Item
+              name="password"
+              rules={[
+                {
+                  required: true,
+                  message: 'Please input your Password!',
+                },
+              ]}
+            >
+              <Input
+                prefix={<LockOutlined className="site-form-item-icon" />}
+                type="password"
+                placeholder="Password"
+              />
+            </Form.Item>
+            <Form.Item>
+              <Form.Item name="remember" valuePropName="checked" noStyle>
+                <Checkbox>Remember me</Checkbox>
+              </Form.Item>
+
+              <a className="login-form-forgot" href="">
+                Forgot password
+              </a>
+            </Form.Item>
+            <Form.Item>
+              <Button type="primary" htmlType="submit" className="login-form-button">
+                Log in
+              </Button>
+              <div className='login-form-register'>Or</div>
+             <div className='login-form-register'><a href="">register now!</a></div>
+            </Form.Item>
+          </Form>
+        </Modal>
       </Sider>
       <Layout>
         <Header
