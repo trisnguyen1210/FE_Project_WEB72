@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import './App.css'
 import {
   MenuFoldOutlined,
@@ -7,21 +7,36 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   LockOutlined,
+  LoginOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
+import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form, Tooltip } from 'antd';
+import { login } from './apis/auth';
 
 
-const { Header, Sider, Content } = Layout;
 const App = () => {
+  const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
-  // const [login, setLogin] = useState(false);
+  const [user, setUser] = useState("superAdmin");
+  const [password, setPassword] = useState("123456");
+  const [loggedIn, setLoggedIn] = useState(true);
+  const handleLogin = () => {
+    const token = login(user, password);
+    if (token) {
+      localStorage.setItem('token', JSON.stringify(token));
+      setLoggedIn(true);
+    } else {
+      localStorage.removeItem('token');
+      setLoggedIn(false);
+    }
+  };
+
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const [isModalLoginOpen, setIsModalLoginOpen] = useState(false);
   const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false);
-
   const handleCancel = () => {
     setIsModalLoginOpen(false);
     setIsModalRegisterOpen(false)
@@ -35,10 +50,11 @@ const App = () => {
     setIsModalLoginOpen(true)
     setIsModalRegisterOpen(false)
   }
-
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
+
+  
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -48,27 +64,23 @@ const App = () => {
           mode="inline"
           defaultSelectedKeys={['1']}
           style={{ height: '100vh' }}
-          items={[
-            {
-              key: '1',
-              icon: <UserOutlined />,
-              label: 'Login',
-              onClick: () => {
-                setIsModalLoginOpen(true);
-              }
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'nav 2',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'nav 3',
-            },
-          ]}
-        />
+        >
+          {loggedIn ?
+              <Menu.Item >
+                <UserOutlined /> <span>{user}</span>
+              </Menu.Item>
+            :
+            <Menu.Item onClick={() => setIsModalLoginOpen(true)}>
+              <LoginOutlined /> <span>Login</span>
+            </Menu.Item>
+          }
+          <Menu.Item onClick={(e) => (e)}>
+            <VideoCameraOutlined /> <span>Nav 2</span>
+          </Menu.Item>
+          <Menu.Item onClick={(e) => (e)}>
+            <UploadOutlined /> <span>Nav 3</span>
+          </Menu.Item>
+        </Menu>
         <Modal title="LogIn"
           open={isModalLoginOpen}
           onCancel={handleCancel}
@@ -91,7 +103,9 @@ const App = () => {
                 },
               ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} 
+              placeholder="Username" 
+              onChange={e => setUser(e.target.value)}/>
             </Form.Item>
             <Form.Item
               name="password"
@@ -106,6 +120,7 @@ const App = () => {
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
+                onChange={e => setPassword(e.target.value)}
               />
             </Form.Item>
             <Form.Item>
@@ -118,7 +133,9 @@ const App = () => {
               </a>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button">
+              <Button type="primary" htmlType="submit" className="login-form-button" 
+              onClick={handleLogin}
+              >
                 Log in
               </Button>
               <div className='login-form-register'><span onClick={handleOpenRegisterModal}>Register now!</span></div>
