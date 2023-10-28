@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState} from 'react';
 import './App.css'
 import {
   MenuFoldOutlined,
@@ -7,21 +7,36 @@ import {
   UserOutlined,
   VideoCameraOutlined,
   LockOutlined,
+  LoginOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
+import { login } from './apis/auth';
 
 
-const { Header, Sider, Content } = Layout;
 const App = () => {
+  const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
-  // const [login, setLogin] = useState(false);
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
+  const handleLogin = () => {
+    const token = login(user, password);
+    if (token) {
+      localStorage.setItem('token', JSON.stringify(token));
+      setLoggedIn(true);
+      setIsModalLoginOpen(false)
+    } else {
+      localStorage.removeItem('token');
+      setLoggedIn(false);
+    }
+  };
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const [isModalLoginOpen, setIsModalLoginOpen] = useState(false);
   const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false);
-
   const handleCancel = () => {
     setIsModalLoginOpen(false);
     setIsModalRegisterOpen(false)
@@ -35,7 +50,6 @@ const App = () => {
     setIsModalLoginOpen(true)
     setIsModalRegisterOpen(false)
   }
-
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
@@ -48,10 +62,37 @@ const App = () => {
           mode="inline"
           defaultSelectedKeys={['1']}
           style={{ height: '100vh' }}
-          items={[
-            {
+          items={
+            loggedIn ?
+            [{
               key: '1',
               icon: <UserOutlined />,
+              label: user,
+              children: [{
+                key:'4',
+                icon: <LogoutOutlined />,
+                label: 'Logout',
+                onClick: () => { setLoggedIn(false)}
+              }]
+              // onClick: () => {
+              //   setIsModalLoginOpen(true);
+              // }
+
+            },
+            {
+              key: '2',
+              icon: <VideoCameraOutlined />,
+              label: 'nav 2',
+            },
+            {
+              key: '3',
+              icon: <UploadOutlined />,
+              label: 'nav 3',
+            },]
+            :
+            [{
+              key: '1',
+              icon: <LoginOutlined />,
               label: 'Login',
               onClick: () => {
                 setIsModalLoginOpen(true);
@@ -66,8 +107,8 @@ const App = () => {
               key: '3',
               icon: <UploadOutlined />,
               label: 'nav 3',
-            },
-          ]}
+            },]
+          }
         />
         <Modal title="LogIn"
           open={isModalLoginOpen}
@@ -91,7 +132,9 @@ const App = () => {
                 },
               ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} 
+              placeholder="Username" 
+              onChange={e => setUser(e.target.value)}/>
             </Form.Item>
             <Form.Item
               name="password"
@@ -106,6 +149,7 @@ const App = () => {
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
+                onChange={e => setPassword(e.target.value)}
               />
             </Form.Item>
             <Form.Item>
@@ -118,7 +162,9 @@ const App = () => {
               </a>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button">
+              <Button type="primary" htmlType="submit" className="login-form-button" 
+              onClick={handleLogin}
+              >
                 Log in
               </Button>
               <div className='login-form-register'><span onClick={handleOpenRegisterModal}>Register now!</span></div>
