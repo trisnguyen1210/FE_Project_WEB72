@@ -8,29 +8,29 @@ import {
   VideoCameraOutlined,
   LockOutlined,
   LoginOutlined,
+  LogoutOutlined,
 } from '@ant-design/icons';
-import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form, Tooltip } from 'antd';
+import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import { login } from './apis/auth';
 
 
 const App = () => {
   const { Header, Sider, Content } = Layout;
   const [collapsed, setCollapsed] = useState(false);
-  const [user, setUser] = useState("superAdmin");
-  const [password, setPassword] = useState("123456");
-  const [loggedIn, setLoggedIn] = useState(true);
+  const [user, setUser] = useState('');
+  const [password, setPassword] = useState('');
+  const [loggedIn, setLoggedIn] = useState(false);
   const handleLogin = () => {
     const token = login(user, password);
     if (token) {
       localStorage.setItem('token', JSON.stringify(token));
       setLoggedIn(true);
+      setIsModalLoginOpen(false)
     } else {
       localStorage.removeItem('token');
       setLoggedIn(false);
     }
   };
-
-
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -53,8 +53,6 @@ const App = () => {
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
-
-  
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -64,23 +62,54 @@ const App = () => {
           mode="inline"
           defaultSelectedKeys={['1']}
           style={{ height: '100vh' }}
-        >
-          {loggedIn ?
-              <Menu.Item >
-                <UserOutlined /> <span>{user}</span>
-              </Menu.Item>
+          items={
+            loggedIn ?
+            [{
+              key: '1',
+              icon: <UserOutlined />,
+              label: user,
+              children: [{
+                key:'4',
+                icon: <LogoutOutlined />,
+                label: 'Logout',
+                onClick: () => { setLoggedIn(false)}
+              }]
+              // onClick: () => {
+              //   setIsModalLoginOpen(true);
+              // }
+
+            },
+            {
+              key: '2',
+              icon: <VideoCameraOutlined />,
+              label: 'nav 2',
+            },
+            {
+              key: '3',
+              icon: <UploadOutlined />,
+              label: 'nav 3',
+            },]
             :
-            <Menu.Item onClick={() => setIsModalLoginOpen(true)}>
-              <LoginOutlined /> <span>Login</span>
-            </Menu.Item>
+            [{
+              key: '1',
+              icon: <LoginOutlined />,
+              label: 'Login',
+              onClick: () => {
+                setIsModalLoginOpen(true);
+              }
+            },
+            {
+              key: '2',
+              icon: <VideoCameraOutlined />,
+              label: 'nav 2',
+            },
+            {
+              key: '3',
+              icon: <UploadOutlined />,
+              label: 'nav 3',
+            },]
           }
-          <Menu.Item onClick={(e) => (e)}>
-            <VideoCameraOutlined /> <span>Nav 2</span>
-          </Menu.Item>
-          <Menu.Item onClick={(e) => (e)}>
-            <UploadOutlined /> <span>Nav 3</span>
-          </Menu.Item>
-        </Menu>
+        />
         <Modal title="LogIn"
           open={isModalLoginOpen}
           onCancel={handleCancel}
