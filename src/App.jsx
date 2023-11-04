@@ -12,6 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import { login } from './apis/auth';
+import ContentPage from '../components/ContentPage'
 
 
 const App = () => {
@@ -74,10 +75,6 @@ const App = () => {
                 label: 'Logout',
                 onClick: () => { setLoggedIn(false)}
               }]
-              // onClick: () => {
-              //   setIsModalLoginOpen(true);
-              // }
-
             },
             {
               key: '2',
@@ -259,7 +256,7 @@ const App = () => {
             background: colorBgContainer,
           }}
         >
-          Content
+          <ContentPage/>
         </Content>
       </Layout>
     </Layout>
