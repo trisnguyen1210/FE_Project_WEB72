@@ -1,4 +1,4 @@
-import { useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import './App.css'
 import {
   MenuFoldOutlined,
@@ -13,6 +13,7 @@ import {
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import ContentPage from '../components/ContentPage'
 import { logIn } from './apis/mock-data/database';
+import Videos from '../components/Videos';
 
 const App = () => {
   const { Header, Sider, Content } = Layout;
@@ -27,28 +28,30 @@ const App = () => {
       setToken(res.token)
       setLoggedIn(!!(JSON.parse(localStorage.getItem('token'))))
       setIsModalLoginOpen(false)
-      
+
     });
   };
   useEffect(() => {
     const login = JSON.parse(localStorage.getItem('token'));
     if (login) {
       setLoggedIn(true);
-    } else{
+    } else {
       setLoggedIn(false);
       setIsModalLoginOpen(true)
     }
-  },[])
+  }, [])
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
 
   const [isModalLoginOpen, setIsModalLoginOpen] = useState(false);
+  const [isModalMyVideos, setIsModalMyVideos] = useState(false);
   const [isModalRegisterOpen, setIsModalRegisterOpen] = useState(false);
   const handleCancel = () => {
     setIsModalLoginOpen(false);
     setIsModalRegisterOpen(false)
+    setIsModalMyVideos(false)
   };
 
   const handleOpenRegisterModal = () => {
@@ -73,48 +76,53 @@ const App = () => {
           style={{ height: '100vh' }}
           items={
             loggedIn ?
-            [{
-              key: '1',
-              icon: <UserOutlined />,
-              label: JSON.parse(localStorage.getItem('token')).user.username || '',
-              children: [{
-                key:'4',
-                icon: <LogoutOutlined />,
-                label: 'Logout',
-                onClick: () => { setLoggedIn(false)
-                  localStorage.removeItem('token')
-                  setIsModalLoginOpen(true)}
-              }]
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'nav 2',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'nav 3',
-            },]
-            :
-            [{
-              key: '1',
-              icon: <LoginOutlined />,
-              label: 'Login',
-              onClick: () => {
-                setIsModalLoginOpen(true);
-              }
-            },
-            {
-              key: '2',
-              icon: <VideoCameraOutlined />,
-              label: 'nav 2',
-            },
-            {
-              key: '3',
-              icon: <UploadOutlined />,
-              label: 'nav 3',
-            },]
+              [{
+                key: '1',
+                icon: <UserOutlined />,
+                label: JSON.parse(localStorage.getItem('token')).user.username || '',
+                children: [{
+                  key: '4',
+                  icon: <LogoutOutlined />,
+                  label: 'Logout',
+                  onClick: () => {
+                    setLoggedIn(false)
+                    localStorage.removeItem('token')
+                    setIsModalLoginOpen(true)
+                  }
+                }]
+              },
+              {
+                key: '2',
+                icon: <VideoCameraOutlined />,
+                label: 'nav 2',
+              },
+              {
+                key: '3',
+                icon: <UploadOutlined />,
+                label: 'My Videos',
+                onClick: () => {
+                  setIsModalMyVideos(true)
+                }
+              },]
+              :
+              [{
+                key: '1',
+                icon: <LoginOutlined />,
+                label: 'Login',
+                onClick: () => {
+                  setIsModalLoginOpen(true);
+                }
+              },
+              {
+                key: '2',
+                icon: <VideoCameraOutlined />,
+                label: 'nav 2',
+              },
+              {
+                key: '3',
+                icon: <UploadOutlined />,
+                label: 'nav 3',
+              },]
           }
         />
         <Modal title="LogIn"
@@ -140,9 +148,9 @@ const App = () => {
                 },
               ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} 
-              placeholder="Username" 
-              onChange={e => setUser(e.target.value)}/>
+              <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                placeholder="Username"
+                onChange={e => setUser(e.target.value)} />
             </Form.Item>
             <Form.Item
               name="password"
@@ -170,8 +178,8 @@ const App = () => {
               </a>
             </Form.Item>
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button" 
-              onClick={handleLogin}
+              <Button type="primary" htmlType="submit" className="login-form-button"
+                onClick={handleLogin}
               >
                 Log in
               </Button>
@@ -230,14 +238,25 @@ const App = () => {
                 placeholder="Comfirm Password"
               />
             </Form.Item>
-            
+
             <Form.Item>
               <Button type="primary" htmlType="submit" className="login-form-button">
-               Register
+                Register
               </Button>
               <div className='login-form-register'><span onClick={handleOpenLoginModal}>Log in</span></div>
             </Form.Item>
           </Form>
+        </Modal>
+        <Modal
+          width='100%'
+          height='fit-content'
+          title="My Videos"
+          onCancel={handleCancel}
+          open={isModalMyVideos}
+          cancelText="Đóng"
+          okButtonProps={{style: {display: 'none'}}}
+          >
+          <Videos />
         </Modal>
       </Sider>
       <Layout>
@@ -268,7 +287,7 @@ const App = () => {
           }}
         >
           <ContentPage
-          token={token}/>
+            token={token} />
         </Content>
       </Layout>
     </Layout>

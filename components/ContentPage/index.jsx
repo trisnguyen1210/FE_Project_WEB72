@@ -8,7 +8,6 @@ const [listVideos, setListVideos] = useState([]);
 useEffect(() => {
    getVideos(token).then(res => setListVideos(res.videos))
 },[])
-console.log('data',listVideos)
   return(
     <>
     <Card style={{width:'fit-content'}}>
