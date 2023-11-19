@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { getVideos } from "../../src/apis/mock-data/database";
 import { Card } from "antd";
 
-const ContentPage = (token) => {
+const Videos = (token) => {
 const [listVideos, setListVideos] = useState([]);
 
 useEffect(() => {
@@ -26,4 +26,4 @@ console.log('data',listVideos)
     </>
   )
 };
-export default ContentPage;
+export default Videos;
