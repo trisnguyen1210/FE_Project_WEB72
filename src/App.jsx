@@ -1,4 +1,4 @@
-import { useState} from 'react';
+import { useEffect, useState} from 'react';
 import './App.css'
 import {
   MenuFoldOutlined,
@@ -11,8 +11,8 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
-import { login } from './apis/auth';
-
+import ContentPage from '../components/ContentPage'
+import { logIn } from './apis/mock-data/database';
 
 const App = () => {
   const { Header, Sider, Content } = Layout;
@@ -20,17 +20,26 @@ const App = () => {
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
+  const [token, setToken] = useState(null);
   const handleLogin = () => {
-    const token = login(user, password);
-    if (token) {
-      localStorage.setItem('token', JSON.stringify(token));
-      setLoggedIn(true);
+    logIn(user, password).then(res => {
+      localStorage.setItem('token', JSON.stringify(res));
+      setToken(res.token)
+      setLoggedIn(!!(JSON.parse(localStorage.getItem('token'))))
       setIsModalLoginOpen(false)
-    } else {
-      localStorage.removeItem('token');
-      setLoggedIn(false);
-    }
+      
+    });
   };
+  useEffect(() => {
+    const login = JSON.parse(localStorage.getItem('token'));
+    if (login) {
+      setLoggedIn(true);
+    } else{
+      setLoggedIn(false);
+      setIsModalLoginOpen(true)
+    }
+  },[])
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -67,17 +76,15 @@ const App = () => {
             [{
               key: '1',
               icon: <UserOutlined />,
-              label: user,
+              label: JSON.parse(localStorage.getItem('token')).user.username || '',
               children: [{
                 key:'4',
                 icon: <LogoutOutlined />,
                 label: 'Logout',
-                onClick: () => { setLoggedIn(false)}
+                onClick: () => { setLoggedIn(false)
+                  localStorage.removeItem('token')
+                  setIsModalLoginOpen(true)}
               }]
-              // onClick: () => {
-              //   setIsModalLoginOpen(true);
-              // }
-
             },
             {
               key: '2',
@@ -111,6 +118,7 @@ const App = () => {
           }
         />
         <Modal title="LogIn"
+          closable={false}
           open={isModalLoginOpen}
           onCancel={handleCancel}
           footer={null}
@@ -259,7 +267,8 @@ const App = () => {
             background: colorBgContainer,
           }}
         >
-          Content
+          <ContentPage
+          token={token}/>
         </Content>
       </Layout>
     </Layout>

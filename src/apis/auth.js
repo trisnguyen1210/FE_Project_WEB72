@@ -1,4 +1,4 @@
-import users from './mock-data/users.json'
+import users from './mock-data/users'
 
 export const login = (username, password) => {
 

@@ -32,3 +32,21 @@
   cursor: pointer;
   color: blue;
 }
+/* .ant-modal, .ant-modal-content {
+  height: 100vh;
+  width: 100vw;
+  margin: 0;
+  top: 0;
+ }
+ .ant-modal-title{
+  margin: 0 auto;
+
+ }
+ .ant-modal-title{
+  text-align: center;
+ }
+ .ant-modal-body {
+  margin: 0 auto;
+  width: 30%;
+  height: 100%;
+ } */
