@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getVideos, } from "../../src/apis/mock-data/database";
 import { Space, Card, Table, Tag, Button, Modal, Form, Input, Checkbox, Upload } from "antd";
+import "./style.css";
 
 const Videos = (token) => {
     const [listVideos, setListVideos] = useState([]);
@@ -33,13 +34,15 @@ const Videos = (token) => {
     return (
         <>
             <Card>
-                <Modal title="Add Video" open={isModalAddVideo} onOk={() => setIsModalAddVideo(false)} onCancel={() => setIsModalAddVideo(false)}>
+                <Modal title="Add Video" open={isModalAddVideo} onOk={() => setIsModalAddVideo(false)} onCancel={() => setIsModalAddVideo(false)} 
+                width={"50%"} style={{margin: '36px auto'}}>
                     <Form
                         name="normal_add_video"
                         className="login-add-video"
                         initialValues={{
                             remember: true,
                         }}
+                        style={{textAlign: 'start'}}
                     >
                         <Form.Item
                             name="title"
@@ -50,7 +53,7 @@ const Videos = (token) => {
                                 },
                             ]}
                         >
-                            <p>Title :</p>
+                            <span>Title :</span>
                             <Input placeholder="Title" 
                             onChange={() => {}} 
                             />
@@ -64,7 +67,7 @@ const Videos = (token) => {
                                 },
                             ]}
                         >
-                            <p>Link Video :</p>
+                            <span>Link Video :</span>
                             <Input placeholder="Link Video" 
                             onChange={() => {}} 
                             />
@@ -78,17 +81,17 @@ const Videos = (token) => {
                                 },
                             ]}
                         >
-                            <p>Content :</p>
+                            <span>Content :</span>
                             <Input placeholder="Content" 
                             onChange={() => {}} 
                             />
                         </Form.Item>
                         <Form.Item name="tagVideo">
-                            <p>Tags :</p>
+                            <span>Tags :</span>
                             <Checkbox.Group options={tagsVideo} onChange={() => {}} />
                         </Form.Item>
                         <Form.Item>
-                            <p>Thumbnail :</p>
+                            <span>Thumbnail :</span>
                             <Upload
                                 // beforeUpload={() => false}
                                 // action=""
