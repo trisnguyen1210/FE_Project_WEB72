@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { getVideos, createVideo, deleteVideo } from "../../src/apis/mock-data/database";
+import { useState } from "react";
+import {  createVideo, deleteVideo } from "../../src/apis/mock-data/database";
 import {
     Space,
     Card,
