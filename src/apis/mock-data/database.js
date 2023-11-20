@@ -15,6 +15,10 @@ export const logIn = async (username, password) => {
     return response.data;
 }
 
+export const signUp = (username, password, role) => {
+   
+    return requestToken.post(`/users/newuser`,  username, password, role)
+}
 export const getVideos = async (token) => {
     const response = await requestToken.get('video',{token});
     return response.data;

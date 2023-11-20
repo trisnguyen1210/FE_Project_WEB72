@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import ContentPage from '../components/ContentPage'
-import { logIn, getVideos } from './apis/mock-data/database';
+import { logIn, getVideos, signUp } from './apis/mock-data/database';
 import Videos from '../components/Videos';
 
 const App = () => {
@@ -20,6 +20,8 @@ const App = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState('');
   const [password, setPassword] = useState('');
+  const [newUser, setNewUser] = useState('');
+  const [comfirmPassword, setComfirmPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState(null);
   const [listVideos, setListVideos] = useState([]);
@@ -70,6 +72,19 @@ const App = () => {
   const onFinish = (values) => {
     console.log('Received values of form: ', values);
   };
+  const handleSignUp = async () => {
+    if(password === comfirmPassword){
+      try{
+             const result = await signUp({username: newUser, password, role :2});
+             setIsModalLoginOpen(true)
+             setIsModalRegisterOpen(false)
+     } catch(error){
+             console.log('error',error)
+         }
+    } else{
+      alert('Password not match')
+    }
+   }
   return (
     <Layout>
       <Sider trigger={null} collapsible collapsed={collapsed}>
@@ -96,11 +111,11 @@ const App = () => {
                   }
                 }]
               },
-              {
-                key: '2',
-                icon: <VideoCameraOutlined />,
-                label: 'nav 2',
-              },
+              // {
+              //   key: '2',
+              //   icon: <VideoCameraOutlined />,
+              //   label: 'nav 2',
+              // },
               {
                 key: '3',
                 icon: <UploadOutlined />,
@@ -209,7 +224,7 @@ const App = () => {
             onFinish={onFinish}
           >
             <Form.Item
-              name="username"
+              name="newUser"
               rules={[
                 {
                   required: true,
@@ -217,7 +232,10 @@ const App = () => {
                 },
               ]}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" />
+              <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Username" 
+                value={newUser}
+                onChange={e => setNewUser(e.target.value)}
+              />
             </Form.Item>
             <Form.Item
               name="password"
@@ -232,6 +250,8 @@ const App = () => {
                 prefix={<LockOutlined className="site-form-item-icon" />}
                 type="password"
                 placeholder="Password"
+                value={password}
+                onChange={e => setPassword(e.target.value)}
               />
             </Form.Item>
             <Form.Item
@@ -245,13 +265,15 @@ const App = () => {
             >
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" />}
-                type="comfirm password"
+                type="password"
                 placeholder="Comfirm Password"
+                value={comfirmPassword}
+                onChange={e => setComfirmPassword(e.target.value)}
               />
             </Form.Item>
 
             <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button">
+              <Button type="primary" htmlType="submit" className="login-form-button" onClick={handleSignUp}>
                 Register
               </Button>
               <div className='login-form-register'><span onClick={handleOpenLoginModal}>Log in</span></div>
