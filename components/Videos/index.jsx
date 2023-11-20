@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { getVideos, createVideo, deleteVideo } from "../../src/apis/mock-data/database";
+import { useState } from "react";
+import {  createVideo, deleteVideo } from "../../src/apis/mock-data/database";
 import {
     Space,
     Card,
@@ -14,8 +14,8 @@ import {
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
-const Videos = (token) => {
-    const [listVideos, setListVideos] = useState([]);
+const Videos = (listVideos) => {
+    const [listVideosData, setListVideosData] = useState(listVideos.listVideos);
     const [isModalAddVideo, setIsModalAddVideo] = useState(false);
     const [content, setContent] = useState("");
     const [title, setTitle] = useState("");
@@ -34,21 +34,16 @@ const Videos = (token) => {
             formData.append("tagVideo", tags);
             formData.append("createBy", JSON.parse(localStorage.getItem("token")).user.username);
             const result = await createVideo(formData);
-            getVideos(token).then((res) => setListVideos(res.videos));
+            if (result) {
+                setListVideosData(listVideosData.filter((item) => item._id != data._id));
+              }
             setIsModalAddVideo(false)
     } catch(error){
             console.log('error',error)
             setIsModalAddVideo(false)
         }
     }
-    // const handleEditVideo = (data) => {
-    //     setIsEdit(true)
-    //     setIsModalAddVideo(true)
-    //     setContent(data.contentVideo)
-    //     setTitle(data.titleVideo)
-    //     setLinkVideo(data.linkVideo)
-    //     setTags(data.tagVideo)
-    // }
+    
     const handleDeleteVideo = async (data) => {
         try {
             const id = data._id
@@ -56,7 +51,7 @@ const Videos = (token) => {
             const username = JSON.parse(localStorage.getItem("token")).user.username;
             const result = await deleteVideo(id, {username, video});
             if (result) {
-                setListVideos(listVideos.filter((item) => item._id != id));
+                setListVideosData(listVideosData.filter((item) => item._id != id));
               }
         } catch(error){
             console.log('error',error)
@@ -113,17 +108,22 @@ const ulrThumbnail =  "https://res.cloudinary.com/dwnty3zou/image/upload/project
             </div>
         </div>
     );
+
+    // const handleEditVideo = (data) => {
+    //     setIsEdit(true)
+    //     setIsModalAddVideo(true)
+    //     setContent(data.contentVideo)
+    //     setTitle(data.titleVideo)
+    //     setLinkVideo(data.linkVideo)
+    //     setTags(data.tagVideo)
+    // }
     //Trinvm end Update
     const handleChange = ({ fileList: newFileList }) => {
         setFileList(newFileList);
     };
 
-    useEffect(() => {
-        getVideos(token).then((res) => setListVideos(res.videos));
-    }, [listVideos || token]);
-
     const { Column } = Table;
-    const data = listVideos
+    const data = listVideosData
         .filter(
             (item) =>
                 item.createBy ===

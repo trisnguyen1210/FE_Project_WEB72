@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import ContentPage from '../components/ContentPage'
-import { logIn } from './apis/mock-data/database';
+import { logIn, getVideos } from './apis/mock-data/database';
 import Videos from '../components/Videos';
 
 const App = () => {
@@ -22,6 +22,7 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState(null);
+  const [listVideos, setListVideos] = useState([]);
   const handleLogin = () => {
     logIn(user, password).then(res => {
       localStorage.setItem('token', JSON.stringify(res));
@@ -40,6 +41,10 @@ const App = () => {
       setIsModalLoginOpen(true)
     }
   }, [])
+
+  useEffect(() => {
+    getVideos(token).then((res) => setListVideos(res.videos));
+  }, []);
 
   const {
     token: { colorBgContainer },
@@ -263,7 +268,8 @@ const App = () => {
           okButtonProps={{style: {display: 'none'}}}
           style={{maxWidth:'100%', padding:0, height: '100vh', top: 0}}
           >
-          <Videos />
+          <Videos 
+          listVideos={listVideos}/>
         </Modal>
       </Sider>
       <Layout>
@@ -294,7 +300,7 @@ const App = () => {
           }}
         >
           <ContentPage
-            token={token} />
+            listVideos={listVideos} />
         </Content>
       </Layout>
     </Layout>
