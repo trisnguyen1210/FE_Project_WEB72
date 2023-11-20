@@ -12,7 +12,7 @@ import {
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
 import ContentPage from '../components/ContentPage'
-import { logIn } from './apis/mock-data/database';
+import { logIn, getVideos } from './apis/mock-data/database';
 import Videos from '../components/Videos';
 
 const App = () => {
@@ -22,6 +22,7 @@ const App = () => {
   const [password, setPassword] = useState('');
   const [loggedIn, setLoggedIn] = useState(false);
   const [token, setToken] = useState(null);
+  const [listVideos, setListVideos] = useState([]);
   const handleLogin = () => {
     logIn(user, password).then(res => {
       localStorage.setItem('token', JSON.stringify(res));
@@ -40,6 +41,10 @@ const App = () => {
       setIsModalLoginOpen(true)
     }
   }, [])
+
+  useEffect(() => {
+    getVideos(token).then((res) => setListVideos(res.videos));
+  }, []);
 
   const {
     token: { colorBgContainer },
@@ -128,64 +133,70 @@ const App = () => {
         <Modal title="LogIn"
           closable={false}
           open={isModalLoginOpen}
-          onCancel={handleCancel}
+          // onCancel={handleCancel}
           footer={null}
+          // width='100%'
+          style={{maxWidth:'100%', padding:0}}
         >
-          <Form
-            name="normal_login"
-            className="login-form"
-            initialValues={{
-              remember: true,
-            }}
-            onFinish={onFinish}
-          >
-            <Form.Item
-              name="username"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Username!',
-                },
-              ]}
+          <div
+          //  style={{width: '30%'}}
+           >
+            <Form
+              name="normal_login"
+              className="login-form"
+              initialValues={{
+                remember: true,
+              }}
+              onFinish={onFinish}
             >
-              <Input prefix={<UserOutlined className="site-form-item-icon" />}
-                placeholder="Username"
-                onChange={e => setUser(e.target.value)} />
-            </Form.Item>
-            <Form.Item
-              name="password"
-              rules={[
-                {
-                  required: true,
-                  message: 'Please input your Password!',
-                },
-              ]}
-            >
-              <Input
-                prefix={<LockOutlined className="site-form-item-icon" />}
-                type="password"
-                placeholder="Password"
-                onChange={e => setPassword(e.target.value)}
-              />
-            </Form.Item>
-            <Form.Item>
-              <Form.Item name="remember" valuePropName="checked" noStyle>
-                <Checkbox>Remember me</Checkbox>
-              </Form.Item>
-
-              <a className="login-form-forgot" href="">
-                Forgot password
-              </a>
-            </Form.Item>
-            <Form.Item>
-              <Button type="primary" htmlType="submit" className="login-form-button"
-                onClick={handleLogin}
+              <Form.Item
+                name="username"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Username!',
+                  },
+                ]}
               >
-                Log in
-              </Button>
-              <div className='login-form-register'><span onClick={handleOpenRegisterModal}>Register now!</span></div>
-            </Form.Item>
-          </Form>
+                <Input prefix={<UserOutlined className="site-form-item-icon" />}
+                  placeholder="Username"
+                  onChange={e => setUser(e.target.value)} />
+              </Form.Item>
+              <Form.Item
+                name="password"
+                rules={[
+                  {
+                    required: true,
+                    message: 'Please input your Password!',
+                  },
+                ]}
+              >
+                <Input
+                  prefix={<LockOutlined className="site-form-item-icon" />}
+                  type="password"
+                  placeholder="Password"
+                  onChange={e => setPassword(e.target.value)}
+                />
+              </Form.Item>
+              <Form.Item>
+                <Form.Item name="remember" valuePropName="checked" noStyle>
+                  <Checkbox>Remember me</Checkbox>
+                </Form.Item>
+
+                <a className="login-form-forgot" href="">
+                  Forgot password
+                </a>
+              </Form.Item>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" className="login-form-button"
+                  onClick={handleLogin}
+                >
+                  Log in
+                </Button>
+                <div className='login-form-register'><span onClick={handleOpenRegisterModal}>Register now!</span></div>
+              </Form.Item>
+            </Form>
+          </div>
         </Modal>
         <Modal title='Register'
           open={isModalRegisterOpen}
@@ -249,14 +260,16 @@ const App = () => {
         </Modal>
         <Modal
           width='100%'
-          height='fit-content'
+          height='100%'
           title="My Videos"
           onCancel={handleCancel}
           open={isModalMyVideos}
           cancelText="Đóng"
           okButtonProps={{style: {display: 'none'}}}
+          style={{maxWidth:'100%', padding:0, height: '100vh', top: 0}}
           >
-          <Videos />
+          <Videos 
+          listVideos={listVideos}/>
         </Modal>
       </Sider>
       <Layout>
@@ -287,7 +300,7 @@ const App = () => {
           }}
         >
           <ContentPage
-            token={token} />
+            listVideos={listVideos} />
         </Content>
       </Layout>
     </Layout>

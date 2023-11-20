@@ -1,17 +1,14 @@
-import { useEffect, useState } from "react";
-import { getVideos } from "../../src/apis/mock-data/database";
+
 import { Card } from "antd";
 
-const ContentPage = (token) => {
-  const [listVideos, setListVideos] = useState([]);
-
-  useEffect(() => {
-    getVideos(token).then((res) => setListVideos(res.videos));
-  }, []);
+const ContentPage = (listVideos) => {
+  
+const listVideo = listVideos.listVideos
+console.log('listVideo',listVideo)
   return (
     <>
       <Card style={{ width: "fit-content" }}>
-        {listVideos.map((video) => (
+        {listVideo.map((video) => (
           <Card key={video._id}>
             <p>{video?.titleVideo}</p>
             <iframe
