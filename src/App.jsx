@@ -48,6 +48,7 @@ const App = () => {
       getVideos(token).then((res) => setListVideos(res.videos));
     } else {
       setLoggedIn(false);
+      setIsModalLoginOpen(true)
     }
   }, []);
 
