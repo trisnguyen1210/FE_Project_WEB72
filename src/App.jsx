@@ -11,9 +11,9 @@ import {
   LogoutOutlined,
 } from '@ant-design/icons';
 import { Layout, Menu, Button, theme, Modal, Input, Checkbox, Form } from 'antd';
-import ContentPage from '../components/ContentPage'
+import ContentPage from './components/ContentPage'
 import { logIn, getVideos, signUp } from './apis/mock-data/database';
-import Videos from '../components/Videos';
+import Videos from './components/Videos';
 
 const App = () => {
   const { Header, Sider, Content } = Layout;
