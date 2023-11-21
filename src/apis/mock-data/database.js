@@ -2,7 +2,7 @@ import axios from 'axios';
 
 const requestToken = axios.create ({
     baseURL: "https://be-project-web72.onrender.com/",
-    timeout: 1000
+    // timeout: 1000
 })
 
 
