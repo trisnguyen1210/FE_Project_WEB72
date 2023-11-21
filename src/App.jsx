@@ -5,7 +5,6 @@ import {
   MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
   LockOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -38,6 +37,7 @@ const App = () => {
     const login = JSON.parse(localStorage.getItem('token'));
     if (login) {
       setLoggedIn(true);
+      getVideos(token).then((res) => setListVideos(res.videos));
     } else {
       setLoggedIn(false);
       setIsModalLoginOpen(true)
@@ -45,8 +45,11 @@ const App = () => {
   }, [])
 
   useEffect(() => {
-    getVideos(token).then((res) => setListVideos(res.videos));
-  }, []);
+    if(loggedIn){
+      getVideos(token).then((res) => setListVideos(res.videos));
+      console.log('abc')
+    }
+  }, [token]);
 
   const {
     token: { colorBgContainer },
@@ -108,14 +111,10 @@ const App = () => {
                     setLoggedIn(false)
                     localStorage.removeItem('token')
                     setIsModalLoginOpen(true)
+                    setListVideos([])
                   }
                 }]
               },
-              // {
-              //   key: '2',
-              //   icon: <VideoCameraOutlined />,
-              //   label: 'nav 2',
-              // },
               {
                 key: '3',
                 icon: <UploadOutlined />,
@@ -134,27 +133,19 @@ const App = () => {
                 }
               },
               {
-                key: '2',
-                icon: <VideoCameraOutlined />,
-                label: 'nav 2',
-              },
-              {
                 key: '3',
                 icon: <UploadOutlined />,
-                label: 'nav 3',
+                label: 'My Videos',
               },]
           }
         />
         <Modal title="LogIn"
           closable={false}
           open={isModalLoginOpen}
-          // onCancel={handleCancel}
           footer={null}
-          // width='100%'
           style={{maxWidth:'100%', padding:0}}
         >
           <div
-          //  style={{width: '30%'}}
            >
             <Form
               name="normal_login"
@@ -288,7 +279,8 @@ const App = () => {
           open={isModalMyVideos}
           cancelText="Đóng"
           okButtonProps={{style: {display: 'none'}}}
-          style={{maxWidth:'100%', padding:0, height: '100vh', top: 0}}
+          className='modal-my-videos'
+          style={{maxWidth:'100%', padding:0, height: '100vh', top: '30px'}}
           >
           <Videos 
           listVideos={listVideos}/>
@@ -311,7 +303,6 @@ const App = () => {
               height: 64,
             }}
           />
-          Header
         </Header>
         <Content
           style={{
