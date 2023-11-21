@@ -5,7 +5,6 @@ import {
   MenuUnfoldOutlined,
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
   LockOutlined,
   LoginOutlined,
   LogoutOutlined,
@@ -46,14 +45,18 @@ const App = () => {
     const login = JSON.parse(localStorage.getItem("token"));
     if (login) {
       setLoggedIn(true);
+      getVideos(token).then((res) => setListVideos(res.videos));
     } else {
       setLoggedIn(false);
     }
   }, []);
 
   useEffect(() => {
-    getVideos(token).then((res) => setListVideos(res.videos));
-  }, []);
+    if(loggedIn){
+      getVideos(token).then((res) => setListVideos(res.videos));
+      console.log('abc')
+    }
+  }, [token]);
 
   const {
     token: { colorBgContainer },
@@ -102,75 +105,56 @@ const App = () => {
           defaultSelectedKeys={["1"]}
           style={{ height: "100vh" }}
           items={
-            loggedIn
-              ? [
-                  {
-                    key: "1",
-                    icon: <UserOutlined />,
-                    label:
-                      JSON.parse(localStorage.getItem("token")).user.username ||
-                      "",
-                    children: [
-                      {
-                        key: "4",
-                        icon: <LogoutOutlined />,
-                        label: "Logout",
-                        onClick: () => {
-                          setLoggedIn(false);
-                          localStorage.removeItem("token");
-                          setIsModalLoginOpen(true);
-                        },
-                      },
-                    ],
-                  },
-                  // {
-                  //   key: '2',
-                  //   icon: <VideoCameraOutlined />,
-                  //   label: 'nav 2',
-                  // },
-                  {
-                    key: "3",
-                    icon: <UploadOutlined />,
-                    label: "My Videos",
-                    onClick: () => {
-                      setIsModalMyVideos(true);
-                    },
-                  },
-                ]
-              : [
-                  {
-                    key: "1",
-                    icon: <LoginOutlined />,
-                    label: "Login",
-                    onClick: () => {
-                      setIsModalLoginOpen(true);
-                    },
-                  },
-                  {
-                    key: "2",
-                    icon: <VideoCameraOutlined />,
-                    label: "nav 2",
-                  },
-                  {
-                    key: "3",
-                    icon: <UploadOutlined />,
-                    label: "nav 3",
-                  },
-                ]
+            loggedIn ?
+              [{
+                key: '1',
+                icon: <UserOutlined />,
+                label: JSON.parse(localStorage.getItem('token')).user.username || '',
+                children: [{
+                  key: '4',
+                  icon: <LogoutOutlined />,
+                  label: 'Logout',
+                  onClick: () => {
+                    setLoggedIn(false)
+                    localStorage.removeItem('token')
+                    setIsModalLoginOpen(true)
+                    setListVideos([])
+                  }
+                }]
+              },
+              {
+                key: '3',
+                icon: <UploadOutlined />,
+                label: 'My Videos',
+                onClick: () => {
+                  setIsModalMyVideos(true)
+                }
+              },]
+              :
+              [{
+                key: '1',
+                icon: <LoginOutlined />,
+                label: 'Login',
+                onClick: () => {
+                  setIsModalLoginOpen(true);
+                }
+              },
+              {
+                key: '3',
+                icon: <UploadOutlined />,
+                label: 'My Videos',
+              },]
           }
         />
         <Modal
           title="LogIn"
           closable={false}
           open={isModalLoginOpen}
-          // onCancel={handleCancel}
           footer={null}
-          // width='100%'
-          style={{ maxWidth: "100%", padding: 0 }}
+          style={{maxWidth:'100%', padding:0}}
         >
           <div
-          //  style={{width: '30%'}}
-          >
+           >
             <Form
               name="normal_login"
               className="login-form"
@@ -319,10 +303,12 @@ const App = () => {
           onCancel={handleCancel}
           open={isModalMyVideos}
           cancelText="Đóng"
-          okButtonProps={{ style: { display: "none" } }}
-          style={{ maxWidth: "100%", padding: 0, height: "100vh", top: 0 }}
-        >
-          <Videos listVideos={listVideos} />
+          okButtonProps={{style: {display: 'none'}}}
+          className='modal-my-videos'
+          style={{maxWidth:'100%', padding:0, height: '100vh', top: '30px'}}
+          >
+          <Videos 
+          listVideos={listVideos}/>
         </Modal>
       </Sider>
       <Layout>

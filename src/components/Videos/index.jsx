@@ -11,6 +11,7 @@ import {
   Input,
   Checkbox,
   Upload,
+  Pagination,
 } from "antd";
 import { PlusOutlined } from "@ant-design/icons";
 
@@ -83,6 +84,12 @@ const Videos = (listVideos) => {
   const [previewOpen, setPreviewOpen] = useState(false);
   const [previewImage, setPreviewImage] = useState("");
   const [previewTitle, setPreviewTitle] = useState("");
+  const [tableParams, setTableParams] = useState({
+    pagination: {
+      current: 1,
+      pageSize: 10,
+    },
+  });
   const handleCancel = () => setPreviewOpen(false);
   const getBase64 = (file) =>
     new Promise((resolve, reject) => {
@@ -129,16 +136,68 @@ const Videos = (listVideos) => {
   };
 
   const { Column } = Table;
-  const data = listVideosData
-    .filter(
+  const data = JSON.parse(localStorage.getItem("token")).user.role === 1 ? listVideosData :
+  listVideosData.filter(
       (item) =>
         item.createBy ===
         JSON.parse(localStorage.getItem("token")).user.username
     )
     .map((item) => {
       return item;
-    });
-  console.log("data", data);
+    })
+
+    const pageSize = 3; // Số mục trên mỗi trang
+    const totalItems = data.length;
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const [selectedRowKeys, setSelectedRowKeys] = useState([]);
+    const [currentPage, setCurrentPage] = useState(1); // Thêm state để theo dõi trang hiện tại
+  
+    const onSelectChange = (newSelectedRowKeys) => {
+      console.log('selectedRowKeys changed: ', newSelectedRowKeys);
+      setSelectedRowKeys(newSelectedRowKeys);
+    };
+  
+    const rowSelection = {
+      selectedRowKeys,
+      onChange: onSelectChange,
+      selections: [
+        Table.SELECTION_ALL,
+        Table.SELECTION_INVERT,
+        Table.SELECTION_NONE,
+        {
+          key: 'odd',
+          text: 'Select Odd Row',
+          onSelect: (changableRowKeys) => {
+            let newSelectedRowKeys = changableRowKeys.filter((_, index) => index % 2 !== 0);
+            setSelectedRowKeys(newSelectedRowKeys);
+          },
+        },
+        {
+          key: 'even',
+          text: 'Select Even Row',
+          onSelect: (changableRowKeys) => {
+            let newSelectedRowKeys = changableRowKeys.filter((_, index) => index % 2 === 0);
+            setSelectedRowKeys(newSelectedRowKeys);
+          },
+        },
+      ],
+    };
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+    };
+  
+    const pagination = {
+      current: currentPage,
+      pageSize: pageSize,
+      total: totalItems,
+      onChange: handlePageChange,
+    };
+  
+    const startIndex = (currentPage - 1) * pageSize;
+    const endIndex = startIndex + pageSize;
+    const currentData = data.slice(startIndex, endIndex);
+  
+  // console.log("data", data);
   return (
     <>
       <Card>
@@ -272,7 +331,7 @@ const Videos = (listVideos) => {
             Add Video
           </Button>
         </div>
-        <Table dataSource={data} rowKey={(data) => data._id}>
+        <Table dataSource={currentData} rowKey={(data) => data._id} pagination={false} rowSelection={rowSelection} >
           <Column title="Title" dataIndex="titleVideo" key="titleVideo" />
           <Column title="LinkVideo" dataIndex="linkVideo" key="linkVideo" />
           <Column title="Content" dataIndex="contentVideo" key="contentVideo" />
@@ -315,6 +374,7 @@ const Videos = (listVideos) => {
             )}
           />
         </Table>
+        <Pagination {...pagination} style={{marginTop: '20px', display:'flex', justifyContent:'flex-end'}}/>
       </Card>
     </>
   );
