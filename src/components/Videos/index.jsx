@@ -368,7 +368,6 @@ const Videos = (listVideos) => {
             key="action"
             render={(data) => (
               <Space size="middle">
-                {/* <button onClick={handleEditVideo(data)}>Edit</button> */}
                 <a onClick={() => handleDeleteVideo(data)}>Delete</a>
               </Space>
             )}
